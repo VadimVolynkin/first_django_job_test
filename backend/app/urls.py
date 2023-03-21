@@ -4,7 +4,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
 
-from .views import OrganizationList
+from .views import OrganizationList, ShopUpdate, export_shops_to_csv
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -21,5 +21,11 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('api/organizations/', OrganizationList.as_view()),
-    path('api/shops/<int:pk>/', OrganizationList.as_view()),
+    path('api/shops/<int:pk>/', ShopUpdate.as_view()),
+    path('api/organizations/<int:id>/shops_file/', export_shops_to_csv),
 ]
+
+
+# GET /api/organizations/                    - список организаций с шопами
+# PUT /api/shops/{id}/                       - обновление сущности магазина
+# GET /organizations/{id}/shops_file/        - файл с расширением xlsx
