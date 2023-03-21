@@ -2,6 +2,7 @@ from django.db import models
 
 
 class Organization(models.Model):
+    """Модель Организации"""
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
 
@@ -10,6 +11,7 @@ class Organization(models.Model):
 
 
 class Shop(models.Model):
+    """Модель Магазина"""
     organization_id = models.ForeignKey(
         Organization,
         on_delete=models.CASCADE,

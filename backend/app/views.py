@@ -14,7 +14,15 @@ class ShopUpdate(UpdateAPIView):
     serializer_class = ShopSerializer
 
 
-def export_shops_to_csv(request, id):
+def export_shops_to_csv(request, id: int):
+    """Экспорт Магазинов в csv
+
+    Args:
+        id (int): id организации
+
+    Returns:
+        csv файл
+    """
     from django.http import HttpResponse
     import csv
     shops = Shop.objects.filter(organization_id=id)
@@ -28,4 +36,3 @@ def export_shops_to_csv(request, id):
     for shop in shops:
         writer.writerow(shop)
     return response
-    
