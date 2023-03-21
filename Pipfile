@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+drf-yasg = "*"
+
+[dev-packages]
+django = "4.1.7"
+djangorestframework = "3.14.0"
+markdown = "3.4.1"
+django-filter = "22.1"
+
+[requires]
+python_version = "3.9"
