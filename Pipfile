@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 drf-yasg = "*"
-djangorestframework-simplejwt = "*"
+djangorestframework-simplejwt = {extras = ["crypto"], version = "*"}
 
 [dev-packages]
 django = "4.1.7"
