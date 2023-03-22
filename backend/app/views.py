@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from rest_framework.generics import ListAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view
 
 from .models import Organization, Shop
 from .serializers import OrganizationSerializer, ShopSerializer
@@ -16,13 +17,13 @@ class OrganizationList(ListAPIView):
 
 
 class ShopUpdate(UpdateAPIView):
-    """Обновление сущьности магазина"""
+    """Обновление сущности магазина"""
     queryset = Shop.objects.all()
     serializer_class = ShopSerializer
     lookup_field = 'pk'
 
     def update(self, request, *args, **kwargs):
-        instance = self.get_object()
+        instance = self.get_object(id=kwargs['id'])
         serializer = self.get_serializer(instance, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -31,6 +32,25 @@ class ShopUpdate(UpdateAPIView):
             return Response({"message": "Shop updated successfully"})
         else:
             return Response({"message": "failed", "details": serializer.errors})
+
+
+# class ShopUpdate(APIView):
+
+#     def put(self, request, *args, **kwargs):
+#         pk = kwargs.get("pk", None)
+#         if not pk:
+#             return Response({"error": "Method PUT not allowed"})
+
+#         try:
+#             instance = Shop.objects.get(pk=pk)
+#         except Exception:
+#             return Response({"error": "Object does not exists"})
+
+#         serializer = ShopSerializer(data=request.data, instance=instance)
+#         serializer.is_valid(raise_exception=True)
+#         serializer.save()
+
+#         return Response({"shop": serializer.data})
 
 
 # TODO стоит ли выносить эту логику в сервис
