@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'rest_framework_simplejwt',
     'background_task',
-    
+
     'app',
 ]
 
@@ -66,7 +66,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, "templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -173,12 +173,22 @@ LOGGING = {
             'class': 'logging.FileHandler',
             'formatter': 'file',
             'filename': 'RequestMethodMiddleware.log'
+        },
+        'request_api': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'formatter': 'file',
+            'filename': 'request_api.log'
         }
     },
     'loggers': {
         'core.middleware': {
             'level': 'DEBUG',
             'handlers': ['file']
-        }
-    }
+        },
+        'django.request': {
+            'level': 'DEBUG',
+            'handlers': ['request_api']
+        },
+    },
 }

@@ -1,56 +1,56 @@
 import csv
-
-from . services.email_tasks import send_email
 from django.http import HttpResponse
-from rest_framework.generics import ListAPIView, UpdateAPIView
+from django.http import Http404
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.decorators import api_view
 
 from .models import Organization, Shop
 from .serializers import OrganizationSerializer, ShopSerializer
 
 
 class OrganizationList(ListAPIView):
-    queryset = Organization.objects.all()
+    from django.db.models import Prefetch
+    shops = Shop.objects.filter(is_deleted=False)
+    queryset = Organization.objects.prefetch_related(
+        Prefetch('shops', queryset=shops))
     serializer_class = OrganizationSerializer
 
 
-class ShopUpdate(UpdateAPIView):
-    """Обновление сущности магазина"""
-    queryset = Shop.objects.all()
-    serializer_class = ShopSerializer
-    lookup_field = 'pk'
+# class ShopUpdate(UpdateAPIView):
+#     """Обновление сущности магазина"""
+#     queryset = Shop.objects.all()
+#     serializer_class = ShopSerializer
+#     lookup_field = 'pk'
 
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object(id=kwargs['id'])
-        serializer = self.get_serializer(instance, data=request.data)
+#     def update(self, request, *args, **kwargs):
+#         instance = self.get_object(id=kwargs['id'])
+#         serializer = self.get_serializer(instance, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             # Отправка Письма
+#             send_email()
+#             return Response({"message": "Shop updated successfully"})
+#         else:
+#             return Response({"message": "failed",
+#                              "details": serializer.errors})
+
+
+class ShopUpdate(APIView):
+    
+    def get_object(self, pk):
+        try:
+            return Shop.objects.get(pk=pk)
+        except Shop.DoesNotExist:
+            raise Http404
+
+    def put(self, request, pk, format=None):
+        instance = self.get_object(pk)
+        serializer = ShopSerializer(instance, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            # Отправка Письма
-            send_email()
-            return Response({"message": "Shop updated successfully"})
-        else:
-            return Response({"message": "failed", "details": serializer.errors})
-
-
-# class ShopUpdate(APIView):
-
-#     def put(self, request, *args, **kwargs):
-#         pk = kwargs.get("pk", None)
-#         if not pk:
-#             return Response({"error": "Method PUT not allowed"})
-
-#         try:
-#             instance = Shop.objects.get(pk=pk)
-#         except Exception:
-#             return Response({"error": "Object does not exists"})
-
-#         serializer = ShopSerializer(data=request.data, instance=instance)
-#         serializer.is_valid(raise_exception=True)
-#         serializer.save()
-
-#         return Response({"shop": serializer.data})
+            return Response(serializer.data)
+        return Response(serializer.errors)
 
 
 # TODO стоит ли выносить эту логику в сервис
@@ -75,5 +75,5 @@ class ExportShopsToCSV(APIView):
         shops = shops.values_list(
             'id', 'name', 'description', 'address', 'index', 'is_deleted')
         for shop in shops:
-            writer.writerow(shop) 
+            writer.writerow(shop)
         return response
