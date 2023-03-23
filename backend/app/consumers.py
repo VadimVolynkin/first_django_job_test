@@ -8,7 +8,7 @@ class ShopConsumer(WebsocketConsumer):
     def connect(self):
         self.room_name = 'test_room_name'
         self.room_group_name = 'test_group_name'
-
+        self.accept()
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name)

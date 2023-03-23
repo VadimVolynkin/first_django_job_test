@@ -1,25 +1,29 @@
 from rest_framework import serializers
 
-from .models import Organization
+from .models import Organization, Shop
 from .consumers import ChatConsumer
 
 
-class ShopSerializer(serializers.Serializer):
+class ShopSerializer(serializers.ModelSerializer):
 
-    def update(self, instance, validated_data):
-        instance.name = validated_data.get('name', instance.name)
-        instance.description = validated_data.get('description', instance.description)
-        instance.address = validated_data.get('address', instance.address)
-        instance.index = validated_data.get('index', instance.index)
-        instance.is_deleted = validated_data.get('is_deleted', instance.is_deleted)
-        instance.save()
-        return instance
+    class Meta:
+        model = Shop
+        fields = '__all__'
+
+    # def update(self, instance, validated_data):
+    #     instance.name = validated_data.get('name', instance.name)
+    #     instance.description = validated_data.get('description', instance.description)
+    #     instance.address = validated_data.get('address', instance.address)
+    #     instance.index = validated_data.get('index', instance.index)
+    #     instance.is_deleted = validated_data.get('is_deleted', instance.is_deleted)
+    #     instance.save()
+    #     return instance
 
     def save(self, **kwargs):
         """Добавление в метод save отправки в магазина в вебсокет"""
         consumer = ChatConsumer()
         consumer.connect()
-        consumer.receive('{"message": "dssssss"}')
+        # consumer.receive('{"message": "ddddd"}')
         saved = super().save(**kwargs)
         print("hello world")
         return saved
