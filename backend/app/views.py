@@ -8,6 +8,16 @@ from rest_framework.views import APIView
 from .models import Organization, Shop
 from .serializers import OrganizationSerializer, ShopSerializer
 
+from django.shortcuts import render
+
+
+def index(request):
+    return render(request, "app/index.html")
+
+
+def room(request, room_name):
+    return render(request, "app/room.html", {"room_name": room_name})
+
 
 class OrganizationList(ListAPIView):
     from django.db.models import Prefetch
@@ -37,7 +47,7 @@ class OrganizationList(ListAPIView):
 
 
 class ShopUpdate(APIView):
-    
+
     def get_object(self, pk):
         try:
             return Shop.objects.get(pk=pk)
