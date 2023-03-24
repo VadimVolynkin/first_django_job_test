@@ -28,45 +28,43 @@ class OrganizationList(ListAPIView):
     serializer_class = OrganizationSerializer
 
 
-class ShopUpdate(UpdateAPIView):
-    """Обновление сущности магазина
-    с отправкой email
-    """
-    queryset = Shop.objects.all()
-    serializer_class = ShopSerializer
-    lookup_field = 'pk'
+# class ShopUpdate(UpdateAPIView):
+#     """Обновление сущности магазина
+#     с отправкой email
+#     """
+#     queryset = Shop.objects.all()
+#     serializer_class = ShopSerializer
+#     lookup_field = 'pk'
 
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object(id=kwargs['id'])
-        serializer = self.get_serializer(instance, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            # Отправка Письма
-            send_email()
-            return Response({"message": "Shop updated successfully"})
-        else:
-            return Response({"message": "failed",
-                             "details": serializer.errors})
-            
-    def patch(self, request, pk):
-        pass
-
-# # TODO Эта вьюха не показывает поля экземпляра
-# class ShopUpdate(APIView):
-
-#     def get_object(self, pk):
-#         try:
-#             return Shop.objects.get(pk=pk)
-#         except Shop.DoesNotExist:
-#             raise Http404
-
-#     def put(self, request, pk, format=None):
-#         instance = self.get_object(pk)
-#         serializer = ShopSerializer(instance, data=request.data)
+#     def update(self, request, *args, **kwargs):
+#         instance = self.get_object(id=kwargs['id'])
+#         serializer = self.get_serializer(instance, data=request.data)
 #         if serializer.is_valid():
 #             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors)
+#             # Отправка Письма
+#             send_email()
+#             return Response({"message": "Shop updated successfully"})
+#         else:
+#             return Response({"message": "failed",
+#                              "details": serializer.errors})
+            
+
+# # TODO Эта вьюха не показывает поля экземпляра
+class ShopUpdate(APIView):
+
+    def get_object(self, pk):
+        try:
+            return Shop.objects.get(pk=pk)
+        except Shop.DoesNotExist:
+            raise Http404
+
+    def put(self, request, pk):
+        instance = self.get_object(pk)
+        serializer = ShopSerializer(instance, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
 
 
 # TODO стоит ли выносить эту логику в сервис
