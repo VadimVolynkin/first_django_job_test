@@ -1,7 +1,7 @@
 import csv
 from django.http import HttpResponse
 from django.http import Http404
-from rest_framework.generics import ListAPIView, UpdateAPIView
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -15,8 +15,8 @@ from django.shortcuts import render
 def index(request):
     return render(request, "app/index.html")
 
-
 def room(request, room_name):
+    """Комната для Channels"""
     return render(request, "app/room.html", {"room_name": room_name})
 
 
